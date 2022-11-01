@@ -2,20 +2,6 @@
 <html>
   <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <!-- <div id="player"></div> -->
-    <!-- <div id="player2"></div> -->
-
-    <!-- <iframe
-      id="player"
-      width="560"
-      height="315"
-      src="https://www.youtube.com/embed/TnUqPBtyafg?enablejsapi=1&controls=0&modestbranding=1&mute=1&clip=UgkxIK8xmIs8P5cbaV5axOXRGyqnQGiU-fVa&amp;clipt=EIGAAxiP3gM"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    ></iframe> -->
-
     <div id="player"></div>
     <div id="player2"></div>
     <button onclick="stopVideo()">Stop</button>
@@ -33,11 +19,17 @@
       //    after the API code downloads.
       var players;
       function onYouTubeIframeAPIReady() {
+        const queryStrings = window.location.search;
+        const urlParams = new URLSearchParams(queryStrings);
+        const videoIdSet = urlParams.get('videoIdSet');
+        const videoIdTest = urlParams.get('videoIdTest')
+        const startSet = Number(urlParams.get('startSet'));
+        const startTest = Number(urlParams.get('startTest'));
         players = {
           player: new YT.Player("player", {
             width: 560,
             height: 315,
-            videoId: "TnUqPBtyafg",
+            videoId: videoIdSet,            
             playerVars: {
               enablejsapi: 1,
               controls: 0,
@@ -45,8 +37,8 @@
               playsinline: 1,
               mute: 1,
               autoplay: 1,
-              clip: "UgkxIK8xmIs8P5cbaV5axOXRGyqnQGiU",
-              clipt: "EIGAAxiP3gM",
+              start: startSet,
+              end: startSet + 12,
             },
             events: {
               onReady: onPlayerReady,
@@ -56,7 +48,7 @@
           player2: new YT.Player("player2", {
             width: 560,
             height: 315,
-            videoId: "h7E6mdND1dc",
+            videoId: videoIdTest,
             playerVars: {
               enablejsapi: 1,
               controls: 0,
@@ -64,8 +56,8 @@
               playsinline: 1,
               mute: 1,
               autoplay: 1,
-              clip: "UgkxjW26z1JTn6n9Zr9ltiazy31vfjrKLdgy",
-              clipt: "EJyrBBioiQU",
+              start: startTest,
+              end: startTest + 12,
             },
             events: {
               onReady: onPlayerReady,
@@ -79,7 +71,6 @@
       var videos = [];
       function onPlayerReady(event) {
         videos.push(event.target);
-        console.log(videos);
         if (videos.length === 2) {
           for (let i = 0; i < videos.length; i++) {
             videos[i].playVideo();
@@ -92,10 +83,6 @@
       //    the player should play for six seconds and then stop.
       var done = false;
       function onPlayerStateChange(event) {
-        console.log(event);
-        // if (event.data == YT.PlayerState.PLAYING) {
-        //   setTimeout(stopVideo, 12000);
-        // }
       }
       function stopVideo() {
         players.player.pauseVideo();
